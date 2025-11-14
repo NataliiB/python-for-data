@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import ast
 
 url = "data/movies_metadata.csv"
 df = pd.read_csv(url)
@@ -25,9 +26,18 @@ df.dropna(inplace=True)
 # print(df.columns)
 # print(df.iloc[:, 10])
 # df.info()
+genres_counts = df['genres'].value_counts()
+def extract_genres(genre_str):
+    try:
+        genres = ast.literal_eval(genre_str)
+        return [genre["name"] for genre in genres]
+    except:
+        pass
+df["genres"] = df['genres'].apply(extract_genres)
 # print(df.head())
 # print(df.genres)
-genres_counts = df['genres'].value_counts()
+all_genres = df["genres"].explode()
+genres_counts = all_genres.value_counts()
 # print(genres_counts)
 # print(genres_counts.index)
 # print(genres_counts.values)
@@ -36,5 +46,5 @@ sns.barplot(x=genres_counts.index, y=genres_counts.values)
 plt.title('Chart')
 plt.xlabel('genres')
 plt.ylabel('counts')
-plt.xticks(rotation=10)
+plt.xticks(rotation=60)
 plt.show()
